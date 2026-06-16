@@ -1,142 +1,193 @@
-# Demo Devops NodeJs
+# DevOps Implementation
 
-This is a simple application to be used in the technical test of DevOps.
+## Technical Challenge Solution
 
-## Getting Started
+This repository contains the original Node.js application provided by Devsu and the complete DevOps implementation developed as part of the technical assessment.
 
-### Prerequisites
+### Implemented Features
 
-- Node.js 18.15.0
+#### Docker
 
-### Installation
+The application was containerized using Docker following production-oriented practices:
 
-Clone this repo.
+- Non-root user execution
+- Health check endpoint
+- Environment variable support
+- Docker Compose support
+- Optimized image build
 
-```bash
-git clone https://bitbucket.org/devsu/demo-devops-nodejs.git
-```
-
-Install dependencies.
-
-```bash
-npm i
-```
-
-### Database
-
-The database is generated as a file in the main path when the project is first run, and its name is `dev.sqlite`.
-
-Consider giving access permissions to the file for proper functioning.
-
-## Usage
-
-To run tests you can use this command.
+Health endpoint:
 
 ```bash
-npm run test
+GET /health
 ```
 
-To run locally the project you can use this command.
-
-```bash
-npm run start
-```
-
-Open http://localhost:8000/api/users with your browser to see the result.
-
-### Features
-
-These services can perform,
-
-#### Create User
-
-To create a user, the endpoint **/api/users** must be consumed with the following parameters:
-
-```bash
-  Method: POST
-```
+Example response:
 
 ```json
 {
-    "dni": "dni",
-    "name": "name"
+  "status": "UP",
+  "timestamp": "2026-06-16T05:30:09.978Z"
 }
 ```
 
-If the response is successful, the service will return an HTTP Status 200 and a message with the following structure:
+---
 
-```json
-{
-    "id": 1,
-    "dni": "dni",
-    "name": "name"
-}
+## CI/CD Pipeline
+
+GitHub Actions was implemented to automate the delivery process.
+
+Pipeline stages:
+
+- Source Code Checkout
+- Dependency Installation
+- Unit Tests Execution
+- Code Coverage Generation
+- Docker Image Build
+- Trivy Vulnerability Scan
+- Push Docker Image to Amazon ECR
+
+---
+
+## Infrastructure as Code
+
+Terraform was used to provision AWS resources.
+
+Provisioned resources:
+
+- Amazon ECR Repository
+- Amazon EKS Cluster
+- Managed Node Group
+- VPC
+- Public Subnets
+- Security Groups
+
+Terraform location:
+
+```text
+terraform/ecr
+terraform/infrastructure
 ```
 
-If the response is unsuccessful, we will receive status 400 and the following message:
-
-```json
-{
-    "error": "error"
-}
-```
-
-#### Get Users
-
-To get all users, the endpoint **/api/users** must be consumed with the following parameters:
+Deployment commands:
 
 ```bash
-  Method: GET
+terraform init
+terraform plan
+terraform apply
 ```
 
-If the response is successful, the service will return an HTTP Status 200 and a message with the following structure:
+---
 
-```json
-[
-    {
-        "id": 1,
-        "dni": "dni",
-        "name": "name"
-    }
-]
+## Container Registry
+
+Docker images are automatically published to Amazon Elastic Container Registry (ECR).
+
+Repository:
+
+```text
+060763492167.dkr.ecr.us-east-1.amazonaws.com/devops-node-app
 ```
 
-#### Get User
+---
 
-To get an user, the endpoint **/api/users/<id>** must be consumed with the following parameters:
+## Kubernetes Deployment
+
+The application is deployed to Amazon EKS using Kubernetes manifests.
+
+Implemented resources:
+
+- Namespace
+- Deployment
+- Service
+- ConfigMap
+- Secret
+- Horizontal Pod Autoscaler (HPA)
+
+Deployment characteristics:
+
+- 2 application replicas
+- Health probes
+- Resource requests and limits
+- Automatic scaling support
+
+Deployment command:
 
 ```bash
-  Method: GET
+kubectl apply -f k8s/
 ```
 
-If the response is successful, the service will return an HTTP Status 200 and a message with the following structure:
+Validation:
 
-```json
-{
-    "id": 1,
-    "dni": "dni",
-    "name": "name"
-}
+```bash
+kubectl get all -n devops-demo
 ```
 
-If the user id does not exist, we will receive status 404 and the following message:
+---
 
-```json
-{
-    "error": "User not found: <id>"
-}
+## Public Endpoint
+
+Application Health Endpoint:
+
+```text
+http://aa218448ee9124d949bb0e37aa49c1f9-632905733.us-east-1.elb.amazonaws.com/health
 ```
 
-If the response is unsuccessful, we will receive status 400 and the following message:
+---
 
-```json
-{
-    "errors": [
-        "error"
-    ]
-}
+## Architecture
+
+```text
+GitHub
+   │
+   ▼
+GitHub Actions
+   │
+   ├── Unit Tests
+   ├── Coverage
+   ├── Trivy Scan
+   ├── Docker Build
+   └── Push to ECR
+   │
+   ▼
+Amazon ECR
+   │
+   ▼
+Amazon EKS
+   │
+   ├── Deployment (2 Replicas)
+   ├── ConfigMap
+   ├── Secret
+   ├── Service
+   └── HPA
+   │
+   ▼
+AWS Load Balancer
+   │
+   ▼
+Node.js Application
 ```
 
-## License
+---
 
-Copyright © 2023 Devsu. All rights reserved.
+## Evidence
+
+The following evidence is included in the repository:
+
+- GitHub Actions execution
+- Terraform deployment
+- Amazon EKS cluster
+- Running Pods
+- Load Balancer Service
+- Health Endpoint validation
+
+---
+
+## Future Improvements
+
+- SonarCloud integration
+- TLS certificates
+- Ingress Controller
+- GitOps deployment with ArgoCD
+- Prometheus and Grafana monitoring
+- Blue/Green deployments
