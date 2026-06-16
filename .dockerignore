@@ -1,0 +1,10 @@
+node_modules
+.git
+.github
+coverage
+
+README.md
+
+.env
+
+dev.sqlite
