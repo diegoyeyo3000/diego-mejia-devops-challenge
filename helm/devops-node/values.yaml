@@ -1,0 +1,38 @@
+namespace: "devops-demo"
+
+replicaCount: 2
+
+image:
+  repository: 060763492167.dkr.ecr.us-east-1.amazonaws.com/devops-node-app
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+config:
+  PORT: "8000"
+
+secret:
+  APP_ENV: production
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  cpu: 70
+
+ingress:
+  enabled: true
+  className: nginx
+  host: devops.local

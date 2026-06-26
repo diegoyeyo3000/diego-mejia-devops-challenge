@@ -72,13 +72,34 @@ jobs:
           docker tag devops-node-app:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-      - name: Configure kubectl
+            - name: Configure kubectl
         run: |
           aws eks update-kubeconfig \
             --region us-east-1 \
             --name devops-challenge
 
-      - name: Deploy to EKS
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: latest
+
+      - name: Deploy with Helm
         run: |
-          kubectl apply -f k8s/
+          helm upgrade --install devops-node ./helm/devops-node \
+            --namespace devops-demo \
+            --create-namespace \
+            --set image.repository=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }} \
+            --set image.tag=${{ github.sha }} \
+            --wait
+
+      - name: Verify rollout
+        run: |
           kubectl rollout status deployment/devops-node-app -n devops-demo
+
+      - name: Verify pods
+        run: |
+          kubectl get pods -n devops-demo
+
+      - name: Verify service
+        run: |
+          kubectl get svc -n devops-demo

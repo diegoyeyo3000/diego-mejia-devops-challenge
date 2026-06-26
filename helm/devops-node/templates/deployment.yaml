@@ -1,25 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: devops-node-app
-  namespace: devops-demo
+  namespace: {{ .Values.namespace }}
+
 spec:
-  replicas: 2
+  replicas: {{ .Values.replicaCount }}
+
   selector:
     matchLabels:
       app: devops-node-app
+
   template:
     metadata:
       labels:
         app: devops-node-app
+
     spec:
       containers:
         - name: devops-node-app
-          image: 060763492167.dkr.ecr.us-east-1.amazonaws.com/devops-node-app:latest
-          imagePullPolicy: Always
+
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
 
           ports:
-            - containerPort: 8000
+            - containerPort: {{ .Values.service.targetPort }}
 
           envFrom:
             - configMapRef:
@@ -30,21 +36,16 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 8000
+              port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 10
             periodSeconds: 15
 
           readinessProbe:
             httpGet:
               path: /health
-              port: 8000
+              port: {{ .Values.service.targetPort }}
             initialDelaySeconds: 5
             periodSeconds: 10
 
           resources:
-            requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
-              cpu: "500m"
-              memory: "256Mi"
+{{ toYaml .Values.resources | indent 12 }}
