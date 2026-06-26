@@ -1,193 +1,219 @@
-# DevOps Implementation
+# DevOps Challenge – Diego Mejía
 
-## Technical Challenge Solution
+## Overview
 
-This repository contains the original Node.js application provided by Devsu and the complete DevOps implementation developed as part of the technical assessment.
+This repository contains the complete solution for the DevOps Technical Challenge.
 
-### Implemented Features
-
-#### Docker
-
-The application was containerized using Docker following production-oriented practices:
-
-- Non-root user execution
-- Health check endpoint
-- Environment variable support
-- Docker Compose support
-- Optimized image build
-
-Health endpoint:
-
-```bash
-GET /health
-```
-
-Example response:
-
-```json
-{
-  "status": "UP",
-  "timestamp": "2026-06-16T05:30:09.978Z"
-}
-```
+The solution includes the requested CI/CD pipeline, Infrastructure as Code, Kubernetes deployment, monitoring, security scanning, containerization, and public deployment on AWS.
 
 ---
 
-## CI/CD Pipeline
+# Architecture
 
-GitHub Actions was implemented to automate the delivery process.
-
-Pipeline stages:
-
-- Source Code Checkout
-- Dependency Installation
-- Unit Tests Execution
-- Code Coverage Generation
-- Docker Image Build
-- Trivy Vulnerability Scan
-- Push Docker Image to Amazon ECR
-
----
-
-## Infrastructure as Code
-
-Terraform was used to provision AWS resources.
-
-Provisioned resources:
-
-- Amazon ECR Repository
-- Amazon EKS Cluster
-- Managed Node Group
-- VPC
-- Public Subnets
-- Security Groups
-
-Terraform location:
-
-```text
-terraform/ecr
-terraform/infrastructure
-```
-
-Deployment commands:
-
-```bash
-terraform init
-terraform plan
-terraform apply
-```
+GitHub
+│
+├── GitHub Actions
+│ ├── Unit Tests
+│ ├── Coverage
+│ ├── SonarCloud
+│ ├── Docker Build
+│ ├── Trivy Scan
+│ ├── Push to Amazon ECR
+│ └── Helm Deployment
+│
+Amazon ECR
+│
+Amazon EKS
+│
+Helm Chart
+│
+AWS Load Balancer Controller
+│
+Application Load Balancer
+│
+Route53
+│
+HTTPS (ACM Certificate)
+│
+NodeJS Application
 
 ---
 
-## Container Registry
+# Technologies
 
-Docker images are automatically published to Amazon Elastic Container Registry (ECR).
-
-Repository:
-
-```text
-060763492167.dkr.ecr.us-east-1.amazonaws.com/devops-node-app
-```
+- NodeJS
+- Docker
+- Kubernetes
+- Helm
+- Terraform
+- Amazon EKS
+- Amazon ECR
+- Application Load Balancer
+- Route53
+- AWS Certificate Manager
+- GitHub Actions
+- SonarCloud
+- Trivy
 
 ---
 
-## Kubernetes Deployment
+# Features Implemented
 
-The application is deployed to Amazon EKS using Kubernetes manifests.
+## Infrastructure
 
-Implemented resources:
+✔ Amazon VPC
+
+✔ Public Subnets
+
+✔ Internet Gateway
+
+✔ Route Tables
+
+✔ Security Groups
+
+✔ Amazon EKS Cluster
+
+✔ Managed Node Group
+
+✔ IAM Roles
+
+✔ OIDC Provider
+
+✔ Route53 Record
+
+✔ AWS Load Balancer Controller
+
+---
+
+## Kubernetes
+
+✔ Deployment
+
+✔ Service
+
+✔ ConfigMap
+
+✔ Secret
+
+✔ Horizontal Pod Autoscaler
+
+✔ Ingress
+
+✔ HTTPS
+
+✔ ALB
+
+---
+
+## Helm
+
+The entire Kubernetes deployment was migrated to Helm.
+
+Resources deployed:
 
 - Namespace
 - Deployment
 - Service
 - ConfigMap
 - Secret
-- Horizontal Pod Autoscaler (HPA)
+- Ingress
+- HPA
 
-Deployment characteristics:
-
-- 2 application replicas
-- Health probes
-- Resource requests and limits
-- Automatic scaling support
-
-Deployment command:
-
-```bash
-kubectl apply -f k8s/
-```
-
-Validation:
-
-```bash
-kubectl get all -n devops-demo
-```
+Image version is automatically updated during CI/CD.
 
 ---
 
-## Public Endpoint
+## CI/CD
 
-Application Health Endpoint:
+Implemented using GitHub Actions.
 
-```text
-http://aa218448ee9124d949bb0e37aa49c1f9-632905733.us-east-1.elb.amazonaws.com/health
-```
+Pipeline stages:
 
----
-
-## Architecture
-
-```text
-GitHub
-   │
-   ▼
-GitHub Actions
-   │
-   ├── Unit Tests
-   ├── Coverage
-   ├── Trivy Scan
-   ├── Docker Build
-   └── Push to ECR
-   │
-   ▼
-Amazon ECR
-   │
-   ▼
-Amazon EKS
-   │
-   ├── Deployment (2 Replicas)
-   ├── ConfigMap
-   ├── Secret
-   ├── Service
-   └── HPA
-   │
-   ▼
-AWS Load Balancer
-   │
-   ▼
-Node.js Application
-```
+1. Checkout
+2. Install dependencies
+3. Unit Tests
+4. Coverage
+5. SonarCloud Analysis
+6. Docker Build
+7. Trivy Security Scan
+8. Push Image to Amazon ECR
+9. Deploy to Amazon EKS using Helm
+10. Rollout Verification
 
 ---
 
-## Evidence
+## Security
 
-The following evidence is included in the repository:
-
-- GitHub Actions execution
-- Terraform deployment
-- Amazon EKS cluster
-- Running Pods
-- Load Balancer Service
-- Health Endpoint validation
+- SonarCloud Static Analysis
+- Trivy Container Scan
+- HTTPS
+- AWS ACM Certificate
+- IAM Roles
+- Kubernetes Secrets
 
 ---
 
-## Future Improvements
+## Infrastructure as Code
 
-- SonarCloud integration
-- TLS certificates
-- Ingress Controller
-- GitOps deployment with ArgoCD
-- Prometheus and Grafana monitoring
-- Blue/Green deployments
+Infrastructure was implemented using Terraform.
+
+Terraform provisions:
+
+- VPC
+- EKS
+- IAM
+- OIDC
+- AWS Load Balancer Controller
+- Route53
+- ALB integration
+
+The application deployment itself is managed through Helm, following Kubernetes best practices.
+
+---
+
+## Improvements Added
+
+Besides the requested requirements, the following improvements were included:
+
+- Helm deployment instead of raw manifests
+- Route53 automation
+- HTTPS with ACM
+- Automatic ALB creation
+- Automatic image versioning
+- Infrastructure modularized with Terraform
+- Security scanning with Trivy
+- Static analysis with SonarCloud
+- HPA autoscaling
+- Health checks
+- Production-ready Ingress
+
+---
+
+# Public URL
+
+https://api.lenapp.click
+
+---
+
+# Repository Structure
+
+terraform/
+helm/
+.github/workflows/
+src/
+Dockerfile
+README.md
+
+---
+
+# Important Notes
+
+The environment has been intentionally left running for validation purposes.
+
+It will remain available for approximately **one week**.
+
+If additional validation time is required, please let me know before shutting it down.
+
+---
+
+Thank you for reviewing my solution.
