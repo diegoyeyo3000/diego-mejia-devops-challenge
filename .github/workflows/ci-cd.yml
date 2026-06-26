@@ -80,6 +80,11 @@ jobs:
             --region us-east-1 \
             --name devops-challenge
 
+      - name: Delete previous namespace
+        run: |
+          kubectl delete namespace devops-demo --ignore-not-found=true
+          kubectl wait --for=delete namespace/devops-demo --timeout=180s || true
+
       - name: Install Helm
         uses: azure/setup-helm@v4
 
