@@ -8,9 +8,15 @@ image:
   pullPolicy: Always
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 80
   targetPort: 8000
+
+ingress:
+  enabled: true
+  className: alb
+  host: api.lenapp.click
+  certificateArn: arn:aws:acm:us-east-1:060763492167:certificate/fe632eb6-5f43-48ca-bfbf-1af9d4fe2acb
 
 config:
   PORT: "8000"
@@ -31,8 +37,3 @@ hpa:
   minReplicas: 2
   maxReplicas: 5
   cpu: 70
-
-ingress:
-  enabled: true
-  className: nginx
-  host: devops.local
