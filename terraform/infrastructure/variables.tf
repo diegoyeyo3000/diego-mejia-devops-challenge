@@ -5,3 +5,12 @@ variable "aws_region" {
 variable "cluster_name" {
   default = "devops-challenge"
 }
+variable "domain_name" {
+  description = "Dominio principal"
+  default     = "lenapp.click"
+}
+
+variable "subdomain" {
+  description = "Subdominio para la API"
+  default     = "api"
+}

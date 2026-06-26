@@ -8,3 +8,7 @@ README.md
 .env
 
 dev.sqlite
+tests
+.git
+terraform
+README
